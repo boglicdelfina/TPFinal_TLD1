@@ -1,4 +1,4 @@
-// boton modo oscuro   / claro
+// boton modo oscuro
 function crearBotonCambiarColor()  {
     // Crear el boton
     const botonColor = document.createElement('button');
@@ -110,7 +110,7 @@ function crearBotonCambiarColor()  {
                 buscador.style.color = '#ffffff';
                 buscador.style.borderColor = '#555';
                 
-                // Links del menú
+                // Links del menu
                 const menuLinks = document.querySelectorAll('.menu a');
                 menuLinks.forEach(link => {
                     link.style.color = '#ffffff';
@@ -120,25 +120,14 @@ function crearBotonCambiarColor()  {
                 botonColor.style.backgroundColor = '#333';
                 botonColor.style.color = '#fff';
                 botonColor.style.borderColor = '#555';
-                // Pequeño delay para asegurar que las tarjetas ya estén en el DOM
+                // Pequeño delay para asegurar que las tarjetas ya esten en el DOM
                 setTimeout(function() {
                     cambiarEstiloTarjetas(true);
                 }, 100);
             }
 
-    // Guardar estado en variable global para acceder desde main.js
+    // Guardar estado en variable global para acceder desde js
     window.modoOscuroActivo = esModoOscuro;
-
-
-
-
-
-
-
-
-
-
-
 
     // Observador para detectar cuando se agreguen tarjetas al DOM
         const observador = new MutationObserver(function()  {
@@ -150,9 +139,6 @@ function crearBotonCambiarColor()  {
 
         observador.observe(document.getElementById('contenedor-noticias'), { childList: true });
     }
-
-
-
 
 // Funcion para cambiar el estilo de las tarjetas de noticias
 function cambiarEstiloTarjetas(esOscuro)  {
@@ -173,4 +159,3 @@ function cambiarEstiloTarjetas(esOscuro)  {
 window.addEventListener('load', function()  {
     crearBotonCambiarColor();
 });
-
