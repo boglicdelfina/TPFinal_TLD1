@@ -101,16 +101,14 @@ function renderNoticias() {
 function agregarNoticia() {
   const titulo = nuevoTitulo.value.trim();
   const texto = nuevoTexto.value.trim();
-  const imagen = nuevoImagen ? nuevoImagen.value.trim() : "";
+  const imagen = nuevoImagen.value.trim();
   if (!titulo || !texto) {
     alert('Completá todos los campos.');
     return;
   }
   const noticias = cargarNoticias();
   
-  if (noticiasEnEdicion >= 0) {
-    // Modo edición: actualizar noticia existente
-    if (noticiasEnEdicion < noticias.length) {
+  if (noticiasEnEdicion >= 0 && noticiasEnEdicion < noticias.length) {
       noticias[noticiasEnEdicion] = { 
         titulo, 
         descripcion: texto, 
@@ -120,22 +118,22 @@ function agregarNoticia() {
       renderNoticias();
       nuevoTitulo.value = "";
       nuevoTexto.value = "";
-      if (nuevoImagen) nuevoImagen.value = "";
+      nuevoImagen.value = "";
       guardar.textContent = "Agregar noticia";
       noticiasEnEdicion = -1;
       alert('La noticia fue modificada correctamente.');
-      try { window.location.href = 'index.html'; } catch (e) { console.log('No se pudo abrir index:', e); }
-    }
-  } else {
+      window.location.href = 'index.html'; 
+    } else {
+
     // Modo agregar: crear noticia nueva
     noticias.unshift({ titulo, descripcion: texto, imagen: imagen });
     guardarNoticias(noticias);
     renderNoticias();
     nuevoTitulo.value = "";
     nuevoTexto.value = "";
-    if (nuevoImagen) nuevoImagen.value = "";
+    nuevoImagen.value = "";
     alert('La noticia fue agregada correctamente.');
-    try { window.location.href = 'index.html'; } catch (e) { console.log('No se pudo abrir index:', e); }
+    window.location.href = 'index.html';
   }
 }
 
@@ -145,8 +143,8 @@ function editarNoticia(index) {
   
   const n = noticias[index];
   nuevoTitulo.value = n.titulo;
-  nuevoTexto.value = n.descripcion || n.texto || "";
-  if (nuevoImagen) nuevoImagen.value = n.imagen || "";
+  nuevoTexto.value = n.descripcion || "";
+  nuevoImagen.value = n.imagen || "";
   
   noticiasEnEdicion = index;
   guardar.textContent = "Guardar cambios";
@@ -162,7 +160,7 @@ function editarNoticia(index) {
 function cancelarEdicion() {
   nuevoTitulo.value = "";
   nuevoTexto.value = "";
-  if (nuevoImagen) nuevoImagen.value = "";
+  nuevoImagen.value = "";
   
   noticiasEnEdicion = -1;
   guardar.textContent = "Agregar noticia";
@@ -180,16 +178,15 @@ function borrarNoticia(index) {
   guardarNoticias(noticias);
   renderNoticias();
   // Volver a la página principal en la misma pestaña para revisar cambios
-  try { window.location.href = 'index.html'; } catch (e) { console.log('No se pudo abrir index:', e); }
+  window.location.href = 'index.html';
 }
 
 // conectar boton guardar al nuevo comportamiento
-if (guardar) {
-  guardar.addEventListener('click', function (e) {
-    e.preventDefault();
-    agregarNoticia();
-  });
-}
+guardar.addEventListener('click', function (e) {
+  e.preventDefault();
+  agregarNoticia();
+});
+
 // conectar botón cancelar edición
 const btnCancelar = document.getElementById('cancelar-edicion');
 if (btnCancelar) {
@@ -207,29 +204,24 @@ if (btnVerMain) {
 }
 
 // Inicializar localStorage con noticias hardcodeadas si está vacío (se ejecuta apenas carga el script)
-function inicializarNoticiasGuardadas() {
-  const noticiasGuardadas = localStorage.getItem(NEWS_KEY);
-
-  if (!noticiasGuardadas || noticiasGuardadas === '[]') {
-    guardarNoticias([]); // arranca vacío
-  }
+if (!localStorage.getItem(NEWS_KEY)) {
+  guardarNoticias([]);
 }
-
-// Inicializar apenas se carga el script (antes del DOMContentLoaded)
-inicializarNoticiasGuardadas();
 
 // render inicial
-document.addEventListener('DOMContentLoaded', function(){
+document.addEventListener('DOMContentLoaded', function () {
   renderNoticias();
+  iniciarApp();
 });
-
 //  Cuando arranca la página, ¿hay un token guardado?
 //  Si ya hay token, el usuario ya se logueó antes -> pedimos sus datos.
-const tokenGuardado = sessionStorage.getItem("token");
-if (tokenGuardado) {
-  obtenerDatosDelUsuario(tokenGuardado);
-}
+function iniciarApp() {
+  const token = sessionStorage.getItem("token");
 
+  if (token) {
+    mostrarBienvenida();
+  }
+}
 
 //  Cuando el usuario hace click en "Ingresar", mandamos
 //  usuario + password a la API. Si está bien, nos devuelve un token.
@@ -253,38 +245,19 @@ btnLogin.addEventListener("click", function () {
     })
     .then(function (data) {
       sessionStorage.setItem("token", data.accessToken);  // guardar al navegador en session
-      mostrarBienvenida(data);
+      
+      sessionStorage.setItem("usuario", JSON.stringify(data));
+      
+      mostrarBienvenida();
     })
     .catch(function (error) {  // otros errores
       mensaje.textContent = error.message;
     });
 });
 
-function obtenerDatosDelUsuario(token) {
-  fetch("https://dummyjson.com/auth/me", {
-    method: "GET",
-    headers: {
-      "Authorization": "Bearer " + token
-    }
-  })
-    .then(function (respuesta) {
-      if (!respuesta.ok) {
-        throw new Error("Token inválido o vencido");
-      }
-      return respuesta.json();
-    })
-    .then(function (data) {
-      mostrarBienvenida(data);
-    })
-    .catch(function (error) {
-      console.log("Error:", error.message);
-      sessionStorage.removeItem("token");  // si el token no sirve, lo borramos y mostramos el login otra vez
-    });
-}
-
 // cambia la vista de login a panel de admin
-function mostrarBienvenida(data) {
-  zonaLogin.hidden      = true;
+function mostrarBienvenida() {
+  zonaLogin.hidden = true;
   zonaBienvenida.hidden = false;
   panel.classList.remove("oculto");
 }
