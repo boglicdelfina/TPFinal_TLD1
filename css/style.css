@@ -12,10 +12,12 @@
     border-bottom: 1px solid #dee2e6;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
     position: relative;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
 #imagen_logo{
-   margin-right: auto;       
+   margin-right: 0;       
     width: 180px;       
     height: auto;
 }
@@ -23,6 +25,7 @@
 .contenedor-buscador input {
     padding: 0.6rem 1rem;
     width: 280px;
+    max-width: 100%;
     border: 1px solid #dee2e6;
     border-radius: 20px;
     font-family: inherit;
@@ -35,12 +38,19 @@
     box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2); 
 }
 
+.menu {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
 .menu a {
     text-decoration: none;
     color: #212529;
-    margin-left: 1.5rem;
     font-weight: 600;
     transition: color 0.3s;
+    white-space: nowrap;
 }
 
 .menu a:hover {
