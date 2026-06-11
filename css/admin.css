@@ -110,6 +110,25 @@ button:hover {
   box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
 }
 
+.panel-header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 0 -40px 24px;
+  padding: 20px 40px 10px;
+  background-color: #111115;
+  z-index: 2;
+  border-radius: 0 0 20px 20px;
+}
+
+.panel-header button {
+  width: auto;
+}
+
 /* 
    Estilos para noticias ya existentes y evitar que se desordenen
    */
